@@ -13,7 +13,7 @@
 
 Последние вычисления
 
-![1l](image/1.png)
+![1l](image/1.PNG)
 
 Наилучшее вычисление.
 
@@ -25,13 +25,13 @@
 
 Последние вычисления
 
-![2l](image/2.png)
+![2l](image/2.PNG)
 
 3. (два слоя, Sigmoid,  128, Adadelta, 1)
 
 Последние вычисления
 
-![3l](image/3.png)
+![3l](image/3.PNG)
 
 Превышен предел эпизодов
 
@@ -39,7 +39,7 @@
 
 Последние вычисления
 
-![4l](image/4.png)
+![4l](image/4.PNG)
 
 Превышен предел эпизодов
 
@@ -47,7 +47,7 @@
 
 Последние вычисления
 
-![5l](image/5.png)
+![5l](image/5.PNG)
 
 Превышен предел эпизодов
 
@@ -66,7 +66,7 @@
 Посадочная площадка всегда находится в координатах (0,0). Координаты-это первые два числа в векторе состояния.
 вознаграждением являются очки за посадку с верхней части экрана на площадку, нулевую скорость, контакт ноги с землей. Если луноход удаляется от посадочной площадки или падает, он теряет вознаграждение.
 
-'''
+	'''
 	env_name = 'LunarLander-v2'
 	# создание объекта среды environment для сценария LunarLander-v2, 
     environment = gym.make(env_name)
@@ -74,49 +74,49 @@
     state_size = environment.observation_space.shape[0]
     # cуществует 4 варианта действий
     num_actions = environment.action_space.n
-'''
+	'''
 
 Пространство действия (action_space) дискретное: 0-Ничего не делать, 1-Запустить левый двигатель, 2-Выключить двигатель, 3-Запустить правый двигатель.
 
 Перенос данных на GPU, для распараллеливания вычислений.
 Задание типа по умолчанию для torch, как тип тензора с плавающей запятой.
 
-'''
+	'''
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     torch.set_default_tensor_type('torch.FloatTensor')
-'''
+	'''
 
 Начальные параметры:
 
-'''
+	'''
  	checkpoint_dir = './checkpoints' # директория для сохранения значений весов модели
     checkpoint_frequency = 10 # частота записи весов
     num_episodes = 1000 # временные шаги (количество максимальных запусков)
     seed = 42 # параметр фиксирования случайных значений
     fc1_dim = 128 # узлы нейронного слоя
     fc2_dim = 128
-'''
+	'''
 
 Фиксирование случайных значений, чтобы ограничить количество источников недетерминированного поведения и попытаться воспроизвести результаты вычислений.
 
-'''
+	'''
     torch.manual_seed(seed)
     random.seed(seed)
     environment.seed(seed)
-'''
+	'''
 
 Инициализация нейронной сети.
 
-'''
+	'''
  	state_size = environment.observation_space.shape[0]
     num_actions = environment.action_space.n
     agent = DQNAgent.create_agent(state_size, num_actions,
                                   device, fc1_dim, fc2_dim)
-'''
+	'''
 
 Обучение модели
 
-'''
+	'''
 	total_steps = 0
     scores, eps_history = [], [] # хранение информаии о вознаграждениях и значении epsilon - параметр, влияющий на действия 
     counter = 0 # количество успешно завершенных эпизодов
@@ -165,7 +165,7 @@
     x = [i + 1 for i in range(len(eps_history))]
     filename = 'train_lunar_lander.png'
     save_plots.saveTrainingPlot(x, scores, eps_history, filename)
-  '''
+ 	 '''
 environment.step:
 наблюдение - объект окружающей среды, представляющий наблюдение за окружающей средой.
 вознаграждение - сумма вознаграждений, полученных за предыдущее действие.
@@ -177,7 +177,7 @@ info - диагностическая информация, используем
 
 Инициализация нейронной сети
 
-'''
+	'''
 	def create_agent(state_size, num_actions, device, fc1_dim=64, fc2_dim=64):
     	def network_builder():
         	net = nn.Sequential(
@@ -219,11 +219,11 @@ info - диагностическая информация, используем
                      update_frequency=update_frequency
                      )
     return agent
-'''
+	'''
 
 Функция для хранения о бновления данных модели.
 
-'''
+	'''
   	# набор данных модели для обновления
 	Sample = namedtuple('Sample',
                     ('state', 'action', 'reward',
@@ -248,7 +248,7 @@ info - диагностическая информация, используем
 
     def __len__(self):
         return len(self.memory)
-'''
+	'''
 
 Класс DQNAgent отвечает за обучение нейронной сети.
 
@@ -256,23 +256,23 @@ info - диагностическая информация, используем
 
 Сохранение значений весов.
 
-'''
+	'''
     def save_weights(self, path):
         torch.save(self.Q_net.state_dict(), path)
-'''
+	'''
 
 Чтение значений весов.
 
-'''
+	'''
     def load_weights(self, path):
         state_dict = torch.load(path)
         self.Q_net.load_state_dict(state_dict)
         self.Q_net_target.load_state_dict(state_dict)
-'''
+	'''
 
 Вычисление действия агента.
-
-'''
+	
+	'''
     def act(self, state):
     	# задание режима вычислений нейронной сети, для соответствующего поведения слоев
         self.Q_net.eval()
@@ -306,11 +306,11 @@ info - диагностическая информация, используем
         else:
         	# иначе совершить случайное действие
             return random.randrange(self.num_actions)
-'''
+	'''
 
 Epsilon-Greedy Q-Learning Algorithm.
 
-'''
+	'''
     def learn(self):
     # задание режима обучения нейронной сети
         self.Q_net.train()
@@ -349,11 +349,11 @@ Epsilon-Greedy Q-Learning Algorithm.
         # обновление значений весов Q_net_target
         if self.steps_done % self.update_frequency == 0:
             self.Q_net_target.load_state_dict(self.Q_net.state_dict())
-'''
+	'''
 
 Обновление данных модели и запуск обучения.
 
-'''
+	'''
     def observe_and_learn(self, state, action, reward, next_state, terminal):
 
         self.memory.push(
@@ -365,7 +365,7 @@ Epsilon-Greedy Q-Learning Algorithm.
                          dtype=torch.get_default_dtype())
         )
         self.learn()
-'''
+	'''
 
 # Q-Learning Algorithm
 
